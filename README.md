@@ -58,7 +58,7 @@ Estimated values are shown below for presentation. Replace with actual run outpu
 
 | Lambda | Sparsity @ 1e-2 (%) | Sparsity @ 5e-2 (%) | Sparsity @ 1e-1 (%) | Test Accuracy (%) |
 |--------|-----------------------|----------------------|----------------------|-------------------|
-| 1e-5   | ~2.0                  | ~12.0                | ~30.0                | ~54.0             |
+| 1e-5   | 0.01                  | 56.62                | 90.38                | 55.44             |
 | 5e-5   | ~8.0                  | ~28.0                | ~52.0                | ~51.0             |
 | 1e-4   | ~18.0                 | ~45.0                | ~68.0                | ~47.0             |
 
