@@ -23,8 +23,8 @@ class PrunableLinear(nn.Module):
         fan_in = self.in_features
         bound = 1 / fan_in**0.5
         nn.init.uniform_(self.bias, -bound, bound)
-        # Start near 1 after sigmoid so training begins close to dense.
-        nn.init.normal_(self.gate_scores, mean=2.0, std=0.01)
+        # Start partially open so L1 can push many gates to near-zero faster.
+        nn.init.normal_(self.gate_scores, mean=-1.5, std=0.1)
 
     def gates(self) -> torch.Tensor:
         return torch.sigmoid(self.gate_scores)
@@ -127,7 +127,7 @@ def evaluate(model, loader, device):
     return 100.0 * correct / total
 
 
-def run_experiment(lambda_l1: float, epochs: int = 5):
+def run_experiment(lambda_l1: float, epochs: int = 12):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     train_loader, test_loader = get_dataloaders(batch_size=128)
     model = PrunableMLP().to(device)
@@ -147,11 +147,15 @@ def run_experiment(lambda_l1: float, epochs: int = 5):
             flush=True,
         )
 
-    final_sparsity = model.sparsity(threshold=1e-2)
+    final_sparsity_1e2 = model.sparsity(threshold=1e-2)
+    final_sparsity_5e2 = model.sparsity(threshold=5e-2)
+    final_sparsity_1e1 = model.sparsity(threshold=1e-1)
     final_test_acc = evaluate(model, test_loader, device)
-    print(f"Final sparsity (<1e-2 gates): {final_sparsity:.2f}%", flush=True)
+    print(f"Final sparsity (<1e-2 gates): {final_sparsity_1e2:.2f}%", flush=True)
+    print(f"Final sparsity (<5e-2 gates): {final_sparsity_5e2:.2f}%", flush=True)
+    print(f"Final sparsity (<1e-1 gates): {final_sparsity_1e1:.2f}%", flush=True)
     print(f"Final test accuracy: {final_test_acc:.2f}%", flush=True)
-    return final_sparsity, final_test_acc
+    return final_sparsity_1e2, final_sparsity_5e2, final_sparsity_1e1, final_test_acc
 
 
 if __name__ == "__main__":
@@ -164,14 +168,14 @@ if __name__ == "__main__":
     print("This run compares 3 lambda values: low, medium, high.", flush=True)
 
     # Compare low / medium / high lambda to show trade-off.
-    lambdas = [1e-6, 1e-5, 1e-4]
+    lambdas = [1e-5, 5e-5, 1e-4]
     results = {}
     for lam in lambdas:
-        sparsity, acc = run_experiment(lambda_l1=lam, epochs=5)
-        results[lam] = (sparsity, acc)
+        s1, s5, s10, acc = run_experiment(lambda_l1=lam, epochs=12)
+        results[lam] = (s1, s5, s10, acc)
 
     print("\n=== Summary ===", flush=True)
-    print("lambda        sparsity(%)    test_acc(%)", flush=True)
-    print("-----------------------------------------", flush=True)
-    for lam, (s, a) in results.items():
-        print(f"{lam:.0e}          {s:8.2f}       {a:8.2f}", flush=True)
+    print("lambda      s@1e-2(%)  s@5e-2(%)  s@1e-1(%)  test_acc(%)", flush=True)
+    print("----------------------------------------------------------", flush=True)
+    for lam, (s1, s5, s10, a) in results.items():
+        print(f"{lam:.0e}       {s1:8.2f}   {s5:8.2f}   {s10:8.2f}   {a:10.2f}", flush=True)

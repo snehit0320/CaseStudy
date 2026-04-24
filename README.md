@@ -15,7 +15,7 @@ Instead of pruning after training, each weight is paired with a learnable gate s
   - `SparsityLoss` is the L1 norm over all gate values
 - Training and evaluation on CIFAR-10
 - Sparsity report:
-  - Percentage of gates below threshold (`gate < 1e-2`)
+  - Percentage of gates below thresholds: `1e-2`, `5e-2`, and `1e-1`
 - Lambda sweep with 3 values to show sparsity vs accuracy trade-off
 
 ## Requirements
@@ -46,9 +46,9 @@ This run compares 3 lambda values: low, medium, high.
 Files already downloaded and verified
 Files already downloaded and verified
 
-=== Lambda: 1e-06 ===
-Epoch 01 | total_loss=3.1272 | ce_loss=1.6340 | sparsity_loss=1493249.2802 | train_acc=42.09% | test_acc=45.66%
-Epoch 02 | total_loss=2.8920 | ce_loss=1.4188 | sparsity_loss=1473194.4825 | train_acc=50.08% | test_acc=49.80%
+=== Lambda: 1e-05 ===
+Epoch 01 | total_loss=4.4923 | ce_loss=1.7691 | sparsity_loss=272326.3104 | train_acc=36.71% | test_acc=43.34%
+Epoch 02 | total_loss=3.6947 | ce_loss=1.5289 | sparsity_loss=216580.0323 | train_acc=45.85% | test_acc=47.66%
 ...
 ```
 
@@ -56,16 +56,17 @@ Epoch 02 | total_loss=2.8920 | ce_loss=1.4188 | sparsity_loss=1473194.4825 | tra
 
 After the script completes all lambda runs, record the final summary here:
 
-| Lambda | Sparsity (%) | Test Accuracy (%) |
-|--------|---------------|-------------------|
-| 1e-6   |               |                   |
-| 1e-5   |               |                   |
-| 1e-4   |               |                   |
+| Lambda | Sparsity @ 1e-2 (%) | Sparsity @ 5e-2 (%) | Sparsity @ 1e-1 (%) | Test Accuracy (%) |
+|--------|-----------------------|----------------------|----------------------|-------------------|
+| 1e-5   |                       |                      |                      |                   |
+| 5e-5   |                       |                      |                      |                   |
+| 1e-4   |                       |                      |                      |                   |
 
 ## Interpretation Guide
 
 - Lower `lambda`: weaker sparsity pressure, usually better accuracy, lower pruning.
 - Higher `lambda`: stronger sparsity pressure, usually more pruning, possible accuracy drop.
+- If `sparsity @ 1e-2` is low, also compare `sparsity @ 5e-2` and `sparsity @ 1e-1` to show gate-shrinking progress.
 - Best trade-off depends on deployment constraints (memory/latency vs accuracy).
 
 ## Files
