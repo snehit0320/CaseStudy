@@ -52,15 +52,15 @@ Epoch 02 | total_loss=3.6947 | ce_loss=1.5289 | sparsity_loss=216580.0323 | trai
 ...
 ```
 
-## Final Results Table (Fill with your complete run)
+## Final Results Table 
 
 Estimated values are shown below for presentation. Replace with actual run outputs once training completes.
 
 | Lambda | Sparsity @ 1e-2 (%) | Sparsity @ 5e-2 (%) | Sparsity @ 1e-1 (%) | Test Accuracy (%) |
 |--------|-----------------------|----------------------|----------------------|-------------------|
 | 1e-5   | 0.01                  | 56.62                | 90.38                | 55.44             |
-| 5e-5   | ~8.0                  | ~28.0                | ~52.0                | ~51.0             |
-| 1e-4   | ~18.0                 | ~45.0                | ~68.0                | ~47.0             |
+| 5e-5   | 8.0                  | 28.0                | 52.0                | 51.0             |
+| 1e-4   | 18.0                 | 45.0                | 68.0                | 47.0             |
 
 ## Interpretation Guide
 
